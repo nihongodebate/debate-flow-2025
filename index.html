@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debate Flow Matrix - Collapsible & Flow View</title>
+    <title>Debate Flow Matrix - Draggable</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -268,6 +268,15 @@
             line-height: 1.5;
             white-space: pre-wrap;
         }
+
+        /* ドラッグスクロール用スタイル */
+        #main-scroll {
+            cursor: grab; /* 通常時はつかむアイコン */
+        }
+        #main-scroll.grabbing {
+            cursor: grabbing; /* ドラッグ中はつかんでいるアイコン */
+            user-select: none; /* テキスト選択防止 */
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -421,7 +430,7 @@
             // ================= Merit 2 =================
             'm2_inh_0': { summary_ja: "有害情報ルート＆中毒増加", script_ja: "第2のメリットは、青少年が有害情報に触れることやSNS中毒にかかる恐れを減らせることです。\n発生過程を説明します。SNS利用は青少年が自殺誘導情報及び有害情報に接触する経路となっています。2022年9月27日付「ファイナンシャルニュース」を引用します。引用開始。保健福祉部と韓国生命尊重希望財団が6月に自殺誘導・有害情報を集中的に取り締まった結果、届け出られた4万1505件のうち97.3%（4万382件）がSNS上で発見された。引用終了。自殺誘導や有害情報の97％がSNSで発見されたということは、もはや、現行の自主規制だけでは青少年を十分に保護できず、政府による制度的介入が必須であることを示しています。2025年7月31日付「メトロ日報」を引用します。引用開始。公益法人中毒フォーラムが全国10代〜50代500人を対象に実施した調査では、SNS企業の青少年保護活動について「不十分」と回答した割合は54.6%に達しました。引用終了。\nまた、有害情報の問題だけではなく、青少年のSNS中毒の問題も深刻化しています。2025年8月8日 KBSニュース「特派員リポート」を引用します。引用開始。カリフォルニア大学サンフランシスコ校（UCSF）の研究チームが小学校高学年の児童を3年間追跡調査した結果、1日平均のSNS利用時間が7分から73分へと増える間に、うつ症状が35％増加したことが確認された。引用終了", summary_ko: "유해 정보 루트 & 중독 증가", script_ko: "제2의 메리트는 청소년이 유해 정보에 접하는 것이나 SNS 중독에 걸릴 우려를 줄일 수 있다는 것입니다. \n발생 과정을 설명합니다. SNS 이용은 청소년이 자살 유도 정보 및 유해 정보에 접촉하는 경로가 되고 있습니다. 2022년 9월 27일자 '파이낸셜 뉴스'를 인용합니다. 인용 시작. 보건복지부와 한국생명존중희망재단이 6월에 자살 유도·유해 정보를 집중 단속한 결과, 신고된 4만 1505건 중 97.3%(4만 382건)가 SNS상에서 발견되었다. 인용 종료.\n또한 유해 정보 문제뿐만 아니라 청소년의 SNS 중독 문제도 심각해지고 있습니다. 2025년 8월 8일 KBS 뉴스 '특파원 리포트'를 인용합니다. 인용 시작. 캘리포니아 대학 샌프란시스코교(UCSF) 연구팀이 초등학교 고학년 아동을 3년간 추적 조사한 결과, 1일 평균 SNS 이용 시간이 7분에서 73분으로 늘어나는 사이 우울 증상이 35% 증가한 것으로 확인되었다. 인용 종료." },
             'm2_inh_1': { summary_ja: "Q: 自殺とSNSの因果関係は？", script_ja: "Q：メリット１の内因性の部分で自殺誘導と憂鬱についておっしゃいましたが、自殺と憂鬱はSNSと関連していることですか?\nA：SNSで自殺を誘導するか、有害な行動を誘導する情報を得ることを言っています。", summary_ko: "Q: 자살과 SNS의 인과관계는?", script_ko: "Q: 메리트 1의 내인성 부분에서 자살 유도와 우울에 대해 말씀하셨는데, 자살과 우울은 SNS와 관련이 있는 것입니까?\nA: SNS에서 자살을 유도하거나 유해한 행동을 유도하는 정보를 얻는 것을 말합니다." },
-            'm2_inh_4': { summary_ja: "原因は学業等でありSNSではない", script_ja: "次にメリット2の発生過程で、自殺誘導、憂鬱など精神健康の悪化をおっしゃいましたが、これも違います。これはSNSとは関係がないからです。資料を2つ引用します。\n1つ目のメリットは、自殺誘導に関する、自殺誘導が関係ないという資料を引用し、資料です。ウモン東亜の24年5月の記事を引用します。 \n引用開始。韓国青少年政策研究員の「2023年子供・青少年の人権実態調査」によると、過去1年間に「死にたいと思ったことがある」と回答した中高生は31%に上がった。死にたいと考えた主な理由は、学業問題42%、将来への不安19%、家族間の葛藤17%の順であった。\n引用終了。\n次の資料は、コメディドットコム2023年の2月の記事を引用します。\n引用開始。最近の研究では、ソーシャルメディアとメンタルヘルスの関連性が従来考えられていたほど強くないことが明らかになっている。中略。研究では、青少年がソーシャルメディアに費やす時間とうつ病や 不安障害との間に優位な関連性は認められなかった。\n引用終了。\nこのように青少年の自殺誘導や健康悪化はSNSと大きな関係がないので、相手側の言っている発生過程はなく、それに、それにより発生する重要性も全くないと、全く発生しないと言えます。なので相手側の、相手側のプランを導入する必要は全くありません。", summary_ko: "원인은 학업 등이며 SNS가 아님", script_ko: "다음으로 메리트 2의 발생 과정에서 자살 유도, 우울 등 정신 건강 악화를 말씀하셨는데, 이것도 다릅니다. 이는 SNS와 관계가 없기 때문입니다. 자료를 인용합니다. 우먼동아의 24년 5월 기사를 인용합니다. 인용 시작. 한국청소년정책연구원의 '2023년 아동·청소년 인권 실태조사'에 따르면 지난 1년간 '죽고 싶다고 생각한 적이 있다'고 응답한 중고생은 31%에 달했다. 죽고 싶다고 생각한 주된 이유는 학업 문제 42%, 장래 불안 19%, 가족 간 갈등 17% 순이었다. 인용 종료.\n다음 자료는 코메디닷컴 2023년 2월 기사를 인용합니다. 인용 시작. 최근 연구에서는 소셜 미디어와 멘탈 헬스의 관련성이 종래 생각되던 것만큼 강하지 않다는 것이 밝혀지고 있다... 연구에서는 청소년이 소셜 미디어에 소비하는 시간과 우울증이나 불안 장애 사이에 유의미한 관련성은 인정되지 않았다. 인용 종료.\n이처럼 청소년의 자살 유도나 건강 악화는 SNS와 큰 관계가 없기 때문에 상대방이 말하는 발생 과정은 없고, 게다가 그로 인해 발생하는 중요성도 전혀 없으면 전혀 발생하지 않는다고 할 수 있습니다. 그래서 상대편의, 상대편의 플랜을 도입할 필요는 전혀 없습니다." },
+            'm2_inh_4': { summary_ja: "原因は学業等でありSNSではない", script_ja: "次にデメリット、メリット2の発生過程で、自殺誘導、憂鬱など精神健康の悪化をおっしゃいましたが、これも違います。これはSNSとは関係がないからです。資料を2つ引用します。\n1つ目のメリットは、自殺誘導に関する、自殺誘導が関係ないという資料を引用し、資料です。ウモン東亜の24年5月の記事を引用します。 \n引用開始。韓国青少年政策研究員の「2023年子供・青少年の人権実態調査」によると、過去1年間に「死にたいと思ったことがある」と回答した中高生は31%に上がった。死にたいと考えた主な理由は、学業問題42%、将来への不安19%、家族間の葛藤17%の順であった。\n引用終了。\n次の資料は、コメディドットコム2023年の2月の記事を引用します。\n引用開始。最近の研究では、ソーシャルメディアとメンタルヘルスの関連性が従来考えられていたほど強くないことが明らかになっている。中略。研究では、青少年がソーシャルメディアに費やす時間とうつ病や 不安障害との間に優位な関連性は認められなかった。\n引用終了。\nこのように青少年の自殺誘導や健康悪化はSNSと大きな関係がないので、相手側の言っている発生過程はなく、それに、それにより発生する重要性も全くないと、全く発生しないと言えます。なので相手側の、相手側のプランを導入する必要は全くありません。", summary_ko: "원인은 학업 등이며 SNS가 아님", script_ko: "다음으로 디메리트, 메리트 2의 발생 과정에서 자살 유도, 우울 등 정신 건강 악화를 말씀하셨는데, 이것도 다릅니다. 이는 SNS와 관계가 없기 때문입니다. 자료를 인용합니다. 우먼동아의 24년 5월 기사를 인용합니다. 인용 시작. 한국청소년정책연구원의 '2023년 아동·청소년 인권 실태조사'에 따르면 지난 1년간 '죽고 싶다고 생각한 적이 있다'고 응답한 중고생은 31%에 달했다. 죽고 싶다고 생각한 주된 이유는 학업 문제 42%, 장래 불안 19%, 가족 간 갈등 17% 순이었다. 인용 종료.\n다음 자료는 코메디닷컴 2023년 2월 기사를 인용합니다. 인용 시작. 최근 연구에서는 소셜 미디어와 멘탈 헬스의 관련성이 종래 생각되던 것만큼 강하지 않다는 것이 밝혀지고 있다... 연구에서는 청소년이 소셜 미디어에 소비하는 시간과 우울증이나 불안 장애 사이에 유의미한 관련성은 인정되지 않았다. 인용 종료.\n이처럼 청소년의 자살 유도나 건강 악화는 SNS와 큰 관계가 없기 때문에 상대방이 말하는 발생 과정은 없고, 게다가 그로 인해 발생하는 중요성도 전혀 없으면 전혀 발생하지 않는다고 할 수 있습니다. 그래서 상대편의, 상대편의 플랜을 도입할 필요는 전혀 없습니다." },
             'm2_inh_7': { summary_ja: "重要な露出ルートなのは事実", script_ja: "自殺誘導、精神健康悪化はSNSと関係ないとの反駁に再反駁します。学業や不安が自殺の原因である場合もあります。しかし、立論で述べたように、SNSは自殺誘発や有害情報の重要な露出ルートです。青少年がこれらの情報に露出されると、精神的な被害がさらに深くなります。ですので、SNSの規制は、青少年を保護するために必要です。", summary_ko: "중요한 노출 루트인 것은 사실", script_ko: "자살 유도, 정신 건강 악화는 SNS와 관계없다는 반박에 재반박합니다. 학업이나 불안이 자살의 원인인 경우도 있습니다. 그러나 입론에서 말했듯이 SNS는 자살 유발이나 유해 정보의 중요한 노출 루트입니다. 청소년이 이러한 정보에 노출되면 정신적인 피해가 더욱 깊어집니다. 따라서 SNS 규제는 청소년을 보호하기 위해 필요합니다." },
             'm2_sol_0': { summary_ja: "利用制限でルートを断つ", script_ja: "しかし、プランの実行により、青少年が有毒情報に接することや、SNS中毒となる恐れは大幅に減少します。", summary_ko: "이용 제한으로 결로를 차단", script_ko: "그러나 계획의 실행으로 인해 청소년이 유해한 정보에 노출되거나 SNS 중독에 빠질 위험은 크게 줄어듭니다." },
             'm2_sig_0': { summary_ja: "甚大な経済的損失(5兆ウォン)", script_ja: "最後に重要性です。青少年のSNS中毒は個人レベルを超え、社会発展を阻害し、実際に経済的損失を引き起こしています。「青年医師」2011年3月7日付記事を引用します。引用開始。研究によると、インターネット中毒による疾病の直接・間接医療費は約3300億ウォンであり、インターネット利用に伴う費用及び中毒による学業・作業損失を含めると最大5兆4570億ウォンの社会的損失が発生するとされています。これは自殺による社会経済的損失3兆856億ウォンを上回る数値です。引用終了。学校暴力やサイバー暴力、有害情報に晒される青少年の精神的被害や模倣・同調行動は、社会的コストを増大させ、健全な社会基盤を弱体化させる深刻な問題です。そのため、社会的・個人的負担を軽減し、未来世代の健全な成長を支えるためにも、本プランは重要です。", summary_ko: "막대한 경제적 손실(5조 원)", script_ko: "마지막으로 중요성입니다. 청소년의 SNS 중독은 개인 차원을 넘어 사회 발전을 저해하고 실제로 경제적 손실을 일으키고 있습니다. '청년의사' 2011년 3월 7일자 기사를 인용합니다. 인용 시작. 연구에 따르면 인터넷 중독으로 인한 질병의 직접·간접 의료비는 약 3300억 원이며, 인터넷 이용에 따른 비용 및 중독으로 인한 학업·작업 손실을 포함하면 최대 5조 4570억 원의 사회적 손실이 발생한다고 되어 있다. 이는 자살로 인한 사회 경제적 손실 3조 856억 원을 상회하는 수치입니다.인용 종료. \n학교 폭력이나 사이버 폭력, 유해 정보에 노출된 청소년의 정신적 피해와 모방·동조 행동은 사회적 비용을 증가시키고 건전한 사회 기반을 약화시키는 심각한 문제입니다. 따라서 사회적·개인적 부담을 경감하고 미래 세대의 건전한 성장을 지원하기 위해서도 본 플랜은 중요합니다." },
@@ -486,19 +495,65 @@
         const flowModal = document.getElementById('flow-modal');
         const modalBody = document.getElementById('modal-body');
 
+        // ドラッグスクロールの実装
+        const slider = document.getElementById('main-scroll');
+        let isDown = false;
+        let startX;
+        let startY;
+        let scrollLeft;
+        let scrollTop;
+        let isDragging = false; // クリックとドラッグを区別するためのフラグ
+
+        slider.addEventListener('mousedown', (e) => {
+            // 左クリックのみ反応 (e.button === 0)
+            if (e.button !== 0) return;
+            isDown = true;
+            isDragging = false;
+            slider.classList.add('grabbing');
+            startX = e.pageX - slider.offsetLeft;
+            startY = e.pageY - slider.offsetTop;
+            scrollLeft = slider.scrollLeft;
+            scrollTop = slider.scrollTop;
+        });
+
+        slider.addEventListener('mouseleave', () => {
+            isDown = false;
+            slider.classList.remove('grabbing');
+        });
+
+        slider.addEventListener('mouseup', () => {
+            isDown = false;
+            slider.classList.remove('grabbing');
+            // クリックイベントが発火した後にドラッグフラグを戻すため、わずかに遅延させる
+            setTimeout(() => { isDragging = false; }, 0); 
+        });
+
+        slider.addEventListener('mousemove', (e) => {
+            if (!isDown) return;
+            e.preventDefault();
+            const x = e.pageX - slider.offsetLeft;
+            const y = e.pageY - slider.offsetTop;
+            const walkX = (x - startX) * 1.5; // スクロール速度調整
+            const walkY = (y - startY) * 1.5;
+            
+            // 少しでも動いたらドラッグとみなす
+            if (Math.abs(walkX) > 5 || Math.abs(walkY) > 5) {
+                isDragging = true;
+            }
+            
+            slider.scrollLeft = scrollLeft - walkX;
+            slider.scrollTop = scrollTop - walkY;
+        });
+
         function toggleAll(expand) {
             columnStates.fill(expand);
             for (let key in groupStates) groupStates[key] = expand;
             renderMatrix();
         }
 
-        // ハイライト処理関数（改良版: 日本語と韓国語に対応）
         function formatScriptText(text, lang) {
             if (!text) return "";
-            
-            // 正規表現パターン
             const regex = /(引用開始[。、．\.]?|を引用します[。、．\.]?|인용 시작[\.,]?|인용하겠습니다[\.,]?|인용합니다[\.,]?)([\s\S]*?)(引用終了[。、．\.]?|인용 종료[\.,]?)/g;
-            
             return text.replace(regex, (match, startMarker, content, endMarker) => {
                 if (startMarker.includes("引用開始") || startMarker.includes("인용 시작")) {
                     return `<span class="quote-highlight">${match}</span>`;
@@ -509,11 +564,15 @@
         }
 
         function toggleColumn(index) {
+            // ドラッグ中はトグルしない
+            if (isDragging) return;
             columnStates[index] = !columnStates[index];
             renderMatrix();
         }
 
         function toggleGroup(id) {
+            // ドラッグ中はトグルしない
+            if (isDragging) return;
             groupStates[id] = !groupStates[id];
             renderMatrix();
         }
@@ -564,8 +623,6 @@
         function renderFlowModalContent() {
             modalBody.innerHTML = '';
             
-            // 選択されたカードをPhase順（時系列順）にソートして取得
-            // キー形式: argId_subRowId_phaseId
             const sortedKeys = Array.from(selectedCards).sort((a, b) => {
                 const phaseA = parseInt(a.split('_').pop());
                 const phaseB = parseInt(b.split('_').pop());
@@ -594,11 +651,9 @@
                 script = formatScriptText(script, currentLang);
                 const phaseLabel = currentLang === 'ja' ? phase.label_ja : phase.label_ko;
 
-                // コンテナ
                 const container = document.createElement('div');
                 container.className = 'flow-card-container';
 
-                // 矢印 (最初のカード以外)
                 if (index > 0) {
                     const arrowEl = document.createElement('div');
                     arrowEl.className = "flex items-center justify-center px-2";
@@ -628,17 +683,14 @@
         function renderMatrix() {
             matrixContainer.innerHTML = '';
             
-            // Grid Template Columns: 左端を110pxに縮小
             const colTemplate = ['110px', ...columnStates.map(s => s ? '320px' : '40px')].join(' ');
             matrixContainer.style.gridTemplateColumns = colTemplate;
 
-            // 1. Sticky Corner
             const corner = document.createElement('div');
             corner.className = "sticky-corner bg-gray-50 flex items-center justify-center font-bold text-gray-500 border-r border-gray-200 z-50 shadow-sm text-xs";
             corner.innerText = currentLang === 'ja' ? "論点 \\ Phase" : "논점 \\ 단계";
             matrixContainer.appendChild(corner);
 
-            // 2. Column Headers
             PHASES.forEach((phase, index) => {
                 const header = document.createElement('div');
                 const isAff = phase.side === 'aff';
@@ -675,7 +727,6 @@
                 matrixContainer.appendChild(header);
             });
 
-            // 3. Rows
             ARGUMENTS.forEach(arg => {
                 const argTitle = currentLang === 'ja' ? arg.title_ja : arg.title_ko;
                 const isExpanded = groupStates[arg.id];
@@ -717,7 +768,6 @@
                         const cardKey = `${arg.id}_${subRow.id}_${phase.id}`;
                         const data = CARDS[cardKey];
 
-                        // 接続線
                         let hasConnection = false;
                         if (data && phase.id > 0) {
                             for (let p = phase.id - 1; p >= 0; p--) {
@@ -756,17 +806,13 @@
 
                             const summary = currentLang === 'ja' ? data.summary_ja : data.summary_ko;
                             let script = currentLang === 'ja' ? data.script_ja : data.script_ko;
-                            
-                            // 引用ハイライト適用
                             script = formatScriptText(script, currentLang);
 
-                            // 開閉状態の判定
                             const isExpanded = expandedCards.has(cardKey);
                             const hintText = isExpanded 
                                 ? (currentLang === 'ja' ? "▲ 閉じる" : "▲ 접기")
                                 : (currentLang === 'ja' ? "▼ クリックで詳細" : "▼ 클릭하여 상세");
 
-                            // 選択状態
                             const isSelected = selectedCards.has(cardKey);
                             const selectedClass = isSelected ? 'card-selected' : '';
 
@@ -785,7 +831,9 @@
                             `;
                             
                             card.addEventListener('click', (e) => {
-                                // 選択ボタン以外をクリックした場合の処理
+                                // ドラッグ中はクリック処理をキャンセル
+                                if (isDragging) return;
+
                                 if (!e.target.closest('.card-select-btn')) {
                                     e.stopPropagation();
                                     toggleCard(cardKey);
@@ -803,10 +851,8 @@
             lucide.createIcons();
         }
 
-        // 初期描画
         renderMatrix();
 
-        // 言語切り替え
         langBtn.addEventListener('click', () => {
             currentLang = currentLang === 'ja' ? 'ko' : 'ja';
             const isJa = currentLang === 'ja';
@@ -820,10 +866,7 @@
             document.getElementById('btn-close-all').innerText = isJa ? "すべて閉じる" : "모두 닫기";
             document.getElementById('modal-title').innerText = isJa ? "議論フロー" : "토론 흐름";
             
-            // FABのテキスト更新
             updateFab();
-            
-            // 再描画（状態維持のため、renderMatrixだけ呼ぶ）
             renderMatrix();
         });
 
