@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Debate Flow Matrix - Collapsible</title>
+    <title>Debate Flow Matrix - Collapsible & Flow View</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
@@ -160,6 +160,114 @@
         .animate-pulse-text {
             animation: pulse-text 2s infinite;
         }
+
+        /* フロー選択モード関連 */
+        .card-select-btn {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            border: 2px solid #cbd5e1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.2s;
+            color: transparent;
+        }
+        .card-select-btn:hover {
+            border-color: #6366f1; /* indigo-500 */
+        }
+        .card-selected .card-select-btn {
+            background-color: #6366f1;
+            border-color: #6366f1;
+            color: white;
+        }
+        .card-selected {
+            ring: 2px solid #6366f1; /* indigo-500 */
+            ring-offset: 2px;
+        }
+
+        /* フロー表示FAB (Floating Action Button) */
+        .flow-fab {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #4f46e5; /* indigo-600 */
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+            z-index: 100;
+            transition: all 0.3s;
+            transform: translateY(200%); /* 初期は隠す */
+        }
+        .flow-fab.visible {
+            transform: translateY(0);
+        }
+        .flow-fab:hover {
+            background-color: #4338ca; /* indigo-700 */
+            transform: translateY(-2px);
+        }
+
+        /* モーダル */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .modal-overlay.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: #f8fafc;
+            width: 98vw;
+            height: 95vh;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .modal-body {
+            flex: 1;
+            overflow-x: auto;
+            overflow-y: auto; /* 縦スクロールを有効化 */
+            padding: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.25rem; /* 間隔をさらに詰める */
+        }
+        /* ポップアップ用カードコンテナ（幅調整） */
+        .flow-card-container {
+            flex-shrink: 0;
+            width: 200px; /* カード幅をさらに縮小 */
+            position: relative;
+        }
+        .flow-script-text {
+            font-size: 0.7rem; /* 文字サイズ縮小 */
+            line-height: 1.5;
+            white-space: pre-wrap;
+        }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
@@ -180,7 +288,7 @@
         </div>
         
         <div class="flex items-center gap-4">
-            <!-- 注釈を移動 -->
+            <!-- 注釈 -->
             <span id="help-text" class="text-xs font-bold text-red-600 bg-yellow-100 px-2 py-1 rounded border border-yellow-200 animate-pulse-text hidden md:inline-block">
                 ※ 各論点やフェーズはクリックで開閉できます
             </span>
@@ -213,6 +321,30 @@
             </div>
         </div>
     </main>
+
+    <!-- Flow View FAB -->
+    <button id="flow-fab" class="flow-fab" onclick="openFlowModal()">
+        <i data-lucide="layers" class="w-5 h-5"></i>
+        <span id="flow-fab-text">選択したフローを表示 (0)</span>
+    </button>
+
+    <!-- Flow Modal -->
+    <div id="flow-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="px-6 py-3 bg-white border-b border-gray-200 flex justify-between items-center flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <i data-lucide="layers" class="w-5 h-5 text-indigo-600"></i>
+                    <h2 class="text-xl font-bold text-gray-800" id="modal-title">議論フロー</h2>
+                </div>
+                <button onclick="closeFlowModal()" class="text-gray-500 hover:text-gray-700">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            <div id="modal-body" class="modal-body custom-scrollbar">
+                <!-- Selected cards will be injected here -->
+            </div>
+        </div>
+    </div>
 
     <script>
         // --- データ定義 ---
@@ -265,7 +397,6 @@
         ];
 
         // カードデータ
-        // key format: "{argId}_{subRowId}_{phaseId}"
         const CARDS = {
             // ================= Merit 1 =================
             'm1_inh_0': { summary_ja: "SNSは少年犯罪の温床", script_ja: "現在、SNSは少年犯罪の温床として浮上しています。放送通信委員会と韓国知能情報社会振興院が発表した「2024年度サイバー暴力実態調査結果」を引用します。引用開始。韓国の青少年の約42%がサイバー暴力を経験し、そのうち68.2%がインスタントメッセージ及びSNSを通じて発生したと示されています。引用終了。\n次に、「法律新聞」2025年6月18日付の記事を引用します。引用開始。パク・ウォンチョル部長判事によると、2024年2月から2025年4月まで少年裁判部に受理されたスマートフォン関連の非行650件を分析した結果、SNSを通じた侮辱、脅迫、通信媒体利用わいせつなどの事例（320件）では、加害者の58%（185件）が小中学生の女子であったとのことです。引用終了。\nこれらの資料は、プランの対象である満16歳未満の青少年が非行を行っている主要な層であることを示しています。", summary_ko: "SNS는 소년범죄의 온상", script_ko: "현재 SNS는 소년범죄의 온상으로 부상하고 있습니다. 방송통신위원회와 한국지능정보사회진흥원이 발표한 '2024년도 사이버 폭력 실태조사 결과'를 인용합니다. 인용 시작. 한국 청소년의 약 42%가 사이버 폭력을 경험했고, 그 중 68.2%가 인스턴트 메시지 및 SNS를 통해 발생했다고 나타났습니다. 인용 종료.\n다음으로 '법률신문' 2025년 6월 18일자 기사를 인용합니다. 인용 시작. 박원철 부장판사에 따르면 2024년 2월부터 2025년 4월까지 소년재판부에 수리된 스마트폰 관련 비행 650건을 분석한 결과, SNS를 통한 모욕, 협박, 통신매체 이용 음란행위 등의 사례(320건)에서는 가해자의 58%(185건)가 초중 여학생이었다고 합니다. 인용 종료.\n이 자료들은 계획의 대상인 만 16세 미만의 청소년이 비행 행위를 하는 주요 계층임을 보여주고 있습니다." },
@@ -341,6 +472,8 @@
         
         // 開いているカードの状態を保持するSet (cardKeyを格納)
         let expandedCards = new Set();
+        // 選択されたカードを保持するSet (cardKeyを格納)
+        let selectedCards = new Set();
 
         const matrixContainer = document.getElementById('matrix-container');
         const langBtn = document.getElementById('lang-btn');
@@ -348,6 +481,10 @@
         const langText = document.getElementById('lang-text');
         const subtitle = document.getElementById('subtitle');
         const helpText = document.getElementById('help-text');
+        const flowFab = document.getElementById('flow-fab');
+        const flowFabText = document.getElementById('flow-fab-text');
+        const flowModal = document.getElementById('flow-modal');
+        const modalBody = document.getElementById('modal-body');
 
         function toggleAll(expand) {
             columnStates.fill(expand);
@@ -360,19 +497,13 @@
             if (!text) return "";
             
             // 正規表現パターン
-            // 日本語: "引用開始" or "を引用します" ... "引用終了"
-            // 韓国語: "인용 시작", "인용하겠습니다", "인용합니다" ... "인용 종료"
             const regex = /(引用開始[。、．\.]?|を引用します[。、．\.]?|인용 시작[\.,]?|인용하겠습니다[\.,]?|인용합니다[\.,]?)([\s\S]*?)(引用終了[。、．\.]?|인용 종료[\.,]?)/g;
             
             return text.replace(regex, (match, startMarker, content, endMarker) => {
-                // 開始マーカー自体が「引用」であることを示す場合（引用開始、인용 시작など）は全体をハイライト
-                // 「～を引用します」のように文脈の一部である場合は、中身だけハイライトする方針だが、
-                // 視認性を高めるため、今回はマッチした全体をハイライトする（以前のロジックを踏襲）
                 if (startMarker.includes("引用開始") || startMarker.includes("인용 시작")) {
                     return `<span class="quote-highlight">${match}</span>`;
                 } else {
-                    // 文末の「を引用します」なども含めてハイライトしたほうが見やすい
-                    return `<span class="quote-highlight">${match}</span>`;
+                    return `${startMarker}<span class="quote-highlight">${content}${endMarker}</span>`;
                 }
             });
         }
@@ -394,6 +525,104 @@
                 expandedCards.add(key);
             }
             renderMatrix();
+        }
+
+        function toggleSelectCard(e, key) {
+            e.stopPropagation();
+            if (selectedCards.has(key)) {
+                selectedCards.delete(key);
+            } else {
+                selectedCards.add(key);
+            }
+            updateFab();
+            renderMatrix();
+        }
+
+        function updateFab() {
+            const count = selectedCards.size;
+            flowFabText.innerText = currentLang === 'ja' 
+                ? `選択したフローを表示 (${count})` 
+                : `선택한 흐름 보기 (${count})`;
+            
+            if (count > 0) {
+                flowFab.classList.add('visible');
+            } else {
+                flowFab.classList.remove('visible');
+            }
+        }
+
+        function openFlowModal() {
+            if (selectedCards.size === 0) return;
+            flowModal.classList.add('open');
+            renderFlowModalContent();
+        }
+
+        function closeFlowModal() {
+            flowModal.classList.remove('open');
+        }
+
+        function renderFlowModalContent() {
+            modalBody.innerHTML = '';
+            
+            // 選択されたカードをPhase順（時系列順）にソートして取得
+            // キー形式: argId_subRowId_phaseId
+            const sortedKeys = Array.from(selectedCards).sort((a, b) => {
+                const phaseA = parseInt(a.split('_').pop());
+                const phaseB = parseInt(b.split('_').pop());
+                return phaseA - phaseB;
+            });
+
+            sortedKeys.forEach((key, index) => {
+                const data = CARDS[key];
+                const parts = key.split('_');
+                const phaseId = parseInt(parts.pop());
+                
+                const phase = PHASES.find(p => p.id === phaseId);
+                const isAff = phase.side === 'aff';
+                const isComparison = data.type === 'comparison';
+                
+                let bgClass, textClass;
+                if (isComparison) {
+                    bgClass = 'card-comparison border-amber-400'; textClass = 'text-amber-900';
+                } else {
+                    bgClass = isAff ? 'bg-indigo-50 border-indigo-200' : 'bg-rose-50 border-rose-200';
+                    textClass = isAff ? 'text-indigo-900' : 'text-rose-900';
+                }
+
+                const summary = currentLang === 'ja' ? data.summary_ja : data.summary_ko;
+                let script = currentLang === 'ja' ? data.script_ja : data.script_ko;
+                script = formatScriptText(script, currentLang);
+                const phaseLabel = currentLang === 'ja' ? phase.label_ja : phase.label_ko;
+
+                // コンテナ
+                const container = document.createElement('div');
+                container.className = 'flow-card-container';
+
+                // 矢印 (最初のカード以外)
+                if (index > 0) {
+                    const arrowEl = document.createElement('div');
+                    arrowEl.className = "flex items-center justify-center px-2";
+                    arrowEl.innerHTML = `<i data-lucide="arrow-right" class="w-5 h-5 text-gray-400"></i>`;
+                    modalBody.appendChild(arrowEl);
+                }
+
+                const cardHtml = `
+                    <div class="w-full bg-white border-2 ${bgClass} rounded-lg shadow-md p-3 mb-2">
+                        <div class="flex justify-between items-center mb-2 border-b border-gray-200 pb-2">
+                            <span class="text-[10px] font-bold text-gray-500 bg-white px-2 py-0.5 rounded border border-gray-200">${phaseLabel}</span>
+                            ${isComparison ? `<span class="phase-badge bg-amber-600 text-white text-[10px] px-2 py-0.5">Comparison</span>` : ''}
+                        </div>
+                        <div class="font-bold text-sm mb-2 leading-snug ${textClass}">${summary}</div>
+                        <div class="text-xs text-gray-700 script-text bg-gray-50 p-2 rounded border border-gray-100 min-h-[50px] leading-relaxed">
+                            ${script}
+                        </div>
+                    </div>
+                `;
+                container.innerHTML = cardHtml;
+                modalBody.appendChild(container);
+            });
+            
+            lucide.createIcons();
         }
 
         function renderMatrix() {
@@ -537,21 +766,30 @@
                                 ? (currentLang === 'ja' ? "▲ 閉じる" : "▲ 접기")
                                 : (currentLang === 'ja' ? "▼ クリックで詳細" : "▼ 클릭하여 상세");
 
+                            // 選択状態
+                            const isSelected = selectedCards.has(cardKey);
+                            const selectedClass = isSelected ? 'card-selected' : '';
+
                             const card = document.createElement('div');
-                            card.className = `w-full cursor-pointer bg-white border-2 ${bgClass} ${hoverClass} rounded-lg shadow-sm transition-all p-3 z-10 ${isComparison ? 'card-comparison' : ''}`;
+                            card.className = `w-full cursor-pointer bg-white border-2 ${bgClass} ${hoverClass} rounded-lg shadow-sm transition-all p-3 z-10 relative ${selectedClass} ${isComparison ? 'card-comparison' : ''}`;
                             card.innerHTML = `
+                                <button class="card-select-btn" onclick="toggleSelectCard(event, '${cardKey}')">
+                                    ${isSelected ? '<i data-lucide="check" class="w-3 h-3 text-white"></i>' : ''}
+                                </button>
                                 ${isComparison ? `<div class="mb-1"><span class="phase-badge bg-amber-600 text-white">Comparison</span></div>` : ''}
-                                <div class="font-bold text-sm mb-1 leading-snug ${textClass} summary-text">${summary}</div>
+                                <div class="font-bold text-sm mb-1 leading-snug ${textClass} summary-text pr-6">${summary}</div>
                                 <div class="details-wrapper mt-2 pt-2 border-t border-gray-200/50 ${isExpanded ? 'expanded' : ''}">
                                     <div class="script-text text-xs text-gray-700">${script}</div>
                                 </div>
                                 <div class="expand-hint text-[10px] text-gray-400 text-center mt-1">${hintText}</div>
                             `;
                             
-                            // 再描画方式に変更したため、クリック時にtoggleCardを呼んで再描画させる
                             card.addEventListener('click', (e) => {
-                                e.stopPropagation();
-                                toggleCard(cardKey);
+                                // 選択ボタン以外をクリックした場合の処理
+                                if (!e.target.closest('.card-select-btn')) {
+                                    e.stopPropagation();
+                                    toggleCard(cardKey);
+                                }
                             });
 
                             cell.appendChild(card);
@@ -580,7 +818,12 @@
             helpText.textContent = isJa ? "※ 各論点やフェーズはクリックで開閉できます" : "※ 각 논점이나 단계는 클릭하여 열고 닫을 수 있습니다";
             document.getElementById('btn-open-all').innerText = isJa ? "すべて開く" : "모두 열기";
             document.getElementById('btn-close-all').innerText = isJa ? "すべて閉じる" : "모두 닫기";
+            document.getElementById('modal-title').innerText = isJa ? "議論フロー" : "토론 흐름";
             
+            // FABのテキスト更新
+            updateFab();
+            
+            // 再描画（状態維持のため、renderMatrixだけ呼ぶ）
             renderMatrix();
         });
 
